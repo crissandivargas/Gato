@@ -275,18 +275,31 @@ void Gato::mejorMovimientoCpu() {
 	bool encontro = false;
 
 	// Definimos los mejores movimientos en un vector. Se utiliza en caso de que no exista un ganador
-	const short int MEJORES[] = { 4, 0, 2, 6, 8, 1, 3, 5, 7 }; //{1,1},{0,0},{0,2}
+	//const short int MEJORES[] = { 4, 0, 2, 6, 8, 1, 3, 5, 7 }; //{1,1},{0,0},{0,2}
+
+	Celda mejores[] = { Celda(1,1), Celda(0,0), Celda(0,2), Celda(2,0), Celda(2,2), Celda(0,1), Celda(1,0), Celda(1,2), Celda(2,1) }
+
+	//00 01 02
+	// 0  1  2
+	//10 11 12
+	// 3  4  5
+	//20 21 22
+	// 6  7  8
 
 	// Verificamos si la CPU es ganadora en el siguiente movimiento. El algoritmo prueba todos los movimientos
 	// posibles hasta que encuentre una posición ganadora o pruebe todas las posibilidades.
-	while (!encontro && (i,j) < CASILLAS) {
-		if (areaJuego.validarPosicion(i,j)) {
-			areaJuego.actualizar(i,j, cpu->getSimbolo());
-			encontro = areaJuego.encuentraGanador(cpu->getSimbolo());
-			areaJuego.actualizar(i,j, ' ');
+	while (!encontro && i < CASILLAS) { //NO SIRVE CAMBIAR
+		while (!encontro && j < CASILLAS) {
+			if (areaJuego.validarPosicion(i, j)) {
+				areaJuego.actualizar(i, j, cpu->getSimbolo());
+				encontro = areaJuego.encuentraGanador(cpu->getSimbolo());
+				areaJuego.actualizar(i, j, '_');
+			}
+			if (!encontro)
+				++j;
 		}
 		if (!encontro)
-			++i,j;
+			++i;
 	}
 
 	// Ahora verificamos si el jugador gana en el próximo movimiento. En ese caso el CPU realiza el
@@ -294,30 +307,39 @@ void Gato::mejorMovimientoCpu() {
 	if (!encontro) {
 		i = 0;
 		j = 0;
-		while (!encontro && (i,j) < CASILLAS) {
-			if (areaJuego.validarPosicion(i,j)) {
-				areaJuego.actualizar(i,j, humano->getSimbolo());
-				encontro = areaJuego.encuentraGanador(humano->getSimbolo());
-				areaJuego.actualizar(i,j, ' ');
+		while (!encontro && i < CASILLAS && j < CASILLAS) {
+			while (!encontro && i < CASILLAS && j < CASILLAS) {
+				if (areaJuego.validarPosicion(i, j)) {
+					areaJuego.actualizar(i, j, humano->getSimbolo());
+					encontro = areaJuego.encuentraGanador(humano->getSimbolo());
+					areaJuego.actualizar(i, j, '_');
+				}
+				if (!encontro)
+					++j;
 			}
 			if (!encontro)
-				++i,j;
+				++i;
 		}
 	}
 
 	// Si el CPU ni el jugador ganan en el siguiente movimiento, la CPU hace la jugada en la mejor casilla disponible
 	// en el siguiente orden: centro, esquinas, lateral
 	if (!encontro) {
-		i,j = 0;
+		i = 0;
+		j = 0;
 
-		while (!encontro && i,j < CASILLAS) {
-			if (areaJuego.validarPosicion(MEJORES[i],MEJORES[j]))
+		while (!encontro && i < 9) {
+			if (areaJuego.validarPosicion(mejores[i].getPosX(), mejores[j].getPosY())) {
 				encontro = true;
-			else
-				++i,j;
+				i = mejores[i].getPosX();
+				j = mejores[j].getPosY();
+			}
+			else {
+				++i;
+				++j;
+			}
 		}
-		i,j = MEJORES[i];
 	}
 
-	areaJuego.actualizar(i,j, cpu->getSimbolo());
+	areaJuego.actualizar(i, j, cpu->getSimbolo());
 }
