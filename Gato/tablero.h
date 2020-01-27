@@ -1,28 +1,28 @@
-// tablero.h
-// Declaración de la clase Tablero
-
-#include "Celda.h"
-#include <string>
-#include <sstream>
-
 #ifndef TABLERO_H
 #define TABLERO_H
 
-#define CASILLAS	3
+#define CASILLAS 3
 
-class Tablero {
+#include "Celda.h"
+#include <sstream>
+#include <vector>
+#include <iterator>
+
+class Tablero
+{
 public:
 	Tablero();
 	~Tablero();
-	Celda*** getTablero();
+	std::vector<std::vector<Celda*> > getTablero();
 	void limpiar();
 	void actualizar(short int, short int, char);
 	void insertar(short int, short int, Celda*);
 	bool encuentraGanador(char);
+	bool movimientosDisponibles();
 	bool validarPosicion(int, int);
 	std::string toString();
 private:
-	Celda*** tab;
+	std::vector<std::vector<Celda*> > tab;
 };
 
 #endif

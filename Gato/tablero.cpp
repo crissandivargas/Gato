@@ -1,41 +1,23 @@
-// tablero.cpp
-// Implementación de la clase Tablero
+#include "Tablero.h"
 
-#include "tablero.h"
-
-Tablero::Tablero() {
-	tab = new Celda * *[CASILLAS]; //crea col inicial
-	for (int i = 0; i < CASILLAS; ++i) {
-		tab[i] = new Celda * [CASILLAS]; //crea filas 
-	}
-
-	/*inicializa la matriz en NULL*/
+Tablero::Tablero()
+{
 	for (int i = 0; i < CASILLAS; i++) {
+		std::vector<Celda*> fila;
 		for (int j = 0; j < CASILLAS; j++) {
-			tab[i][j] = nullptr;
+			fila.push_back(new Celda(i, j, '_'));
 		}
+		tab.push_back(fila);
 	}
 }
-
-Tablero::~Tablero() {
-	/*destruye los objetos en el tablero*/
-	for (int i = 0; i < CASILLAS; i++) {
-		for (int j = 0; j < CASILLAS; j++) {
-			delete tab[i][j];
-		}
-	}
-	/*destruye los arrays*/
-	for (int i = 0; i < CASILLAS; ++i) {
-		delete[] tab[i];
-	}
-	/*destruye tab*/
-	delete[] tab;
+Tablero::~Tablero()
+{
+	tab.~vector();
 }
-
-Celda*** Tablero::getTablero() {
+std::vector<std::vector<Celda*>> Tablero::getTablero()
+{
 	return tab;
 }
-
 void Tablero::limpiar() {
 	for (int i = 0; i < CASILLAS; i++) {
 		for (int j = 0; j < CASILLAS; j++) {
@@ -43,44 +25,52 @@ void Tablero::limpiar() {
 		}
 	}
 }
-
-void Tablero::actualizar(short int i, short int j, char s) {
-	tab[i][j]->setSimbolo(s);
+void Tablero::actualizar(short int i, short int j, char c) {
+	tab[i][j]->setSimbolo(c);
 }
-
-//Funcion de prueba
 void Tablero::insertar(short int i, short int j, Celda* c) {
-	if(c != NULL) tab[i][j] = c; 
+	if (c != NULL) tab[i][j] = c;
 }
-
 bool Tablero::encuentraGanador(char c) {
-
 	/*verifica si hay victoria en las filas*/
-	for (int i = 0; i < CASILLAS; i++) {
+	for (int i = 0; i < CASILLAS; i++) { //revisa que sea el char correcto
 		if (tab[i][0]->getSimbolo() == tab[i][1]->getSimbolo() && tab[i][1]->getSimbolo() == tab[i][2]->getSimbolo()) {
-			if(tab[i][0]->getSimbolo() == c) return true;
+			if (tab[i][0]->getSimbolo() == c) return true;
 		}
-	}
 
+	}
 	/*verifica si hay victora en las columnas*/
 	for (int i = 0; i < CASILLAS; i++) {
-		if (tab[0][i]->getSimbolo() == tab[1][i]->getSimbolo() && tab[1][i]->getSimbolo() == tab[2][i]->getSimbolo()) {
-			if(tab[0][i]->getSimbolo() == c) return true;
+		if (tab[0][i]->getSimbolo() == c) {
+			if (tab[0][i]->getSimbolo() == tab[1][i]->getSimbolo() && tab[1][i]->getSimbolo() == tab[2][i]->getSimbolo()) {
+				if (tab[0][i]->getSimbolo() == c) return true;
+			}
 		}
+
 	}
 	/*verifica si hay victora en las diagonales izq-der, der-izq*/
-	if (tab[0][0]->getSimbolo() == tab[1][1]->getSimbolo() && tab[1][1]->getSimbolo() == tab[2][2]->getSimbolo()) {
-		if(tab[0][0]->getSimbolo() == c) return true;
-	}
+	if (tab[0][0]->getSimbolo() == c) {
+		if (tab[0][0]->getSimbolo() == tab[1][1]->getSimbolo() && tab[1][1]->getSimbolo() == tab[2][2]->getSimbolo()) {
+			if (tab[0][0]->getSimbolo() == c) return true;
+		}
 
-	if (tab[0][2]->getSimbolo() == tab[1][1]->getSimbolo() && tab[1][1]->getSimbolo() == tab[2][0]->getSimbolo()) {
-		if(tab[0][2]->getSimbolo() == c) return true;
+		if (tab[0][2]->getSimbolo() == tab[1][1]->getSimbolo() && tab[1][1]->getSimbolo() == tab[2][0]->getSimbolo()) {
+			if (tab[0][2]->getSimbolo() == c) return true;
+		}
 	}
-
 	// Si ninguna coincide, retornamos FALSO
+
 	return false;
 }
-
+bool Tablero::movimientosDisponibles() {
+	/*revisa si quedan movimientos disponibles en el tablero*/
+	for (int i = 0; i < CASILLAS; i++) {
+		for (int j = 0; j < CASILLAS; j++) {
+			if (tab[i][j]->getSimbolo() == '_') return true;
+		}
+	}
+	return false;
+}
 bool Tablero::validarPosicion(int i, int j) {
 	if (i < 0 || i > 3 || j < 0 || j > 3) {
 		return false;
@@ -91,9 +81,7 @@ bool Tablero::validarPosicion(int i, int j) {
 	}
 	return true;
 }
-
-std::string Tablero::toString()
-{
+std::string Tablero::toString() {
 	std::stringstream s;
 	for (int i = 0; i < CASILLAS; i++) {
 		for (int j = 0; j < CASILLAS; j++) {
