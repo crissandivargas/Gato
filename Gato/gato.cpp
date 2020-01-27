@@ -624,7 +624,7 @@ Celda Gato::mejorMovimientoMini()
 				aux[i][j]->setSimbolo(cpu->getSimbolo());
 
 				/*evalua el mejor movimiento en esa posicion*/
-				int valorMov = minimax(areaJuego, 0, false);
+				int valorMov = minimax(areaJuego, false);
 
 				/*deshace el movimiento con ficha de cpu*/
 				aux[i][j]->setSimbolo('_');
@@ -705,7 +705,7 @@ int Gato::evaluaTablero(Tablero t)
 	/*si hay empate o no gana nadie aun retorna 0*/
 	return 0;
 }
-int Gato::minimax(Tablero tablero, int depth, bool esMax)
+int Gato::minimax(Tablero tablero, bool esMax)
 {
 	/*Considera todos los casos posibles del juego y
 	retorna el valor de la tabla. Usa la funcion evaluate para
@@ -744,7 +744,7 @@ int Gato::minimax(Tablero tablero, int depth, bool esMax)
 					aux[i][j]->setSimbolo(cpu->getSimbolo());
 
 					/*llama a minimax recursivamente y escoge el valor maximo*/
-					mejor = std::max(mejor, minimax(tablero, depth + 1, false));
+					mejor = std::max(mejor, minimax(tablero, false));
 
 					/*deshace el movimiento con ficha de humano*/
 					aux[i][j]->setSimbolo('_');
@@ -768,7 +768,7 @@ int Gato::minimax(Tablero tablero, int depth, bool esMax)
 					aux[i][j]->setSimbolo(humano->getSimbolo());
 
 					/*llama a minimax recursivamente y escoge el valor maximo*/
-					mejor = std::min(mejor, minimax(tablero, depth + 1, true));
+					mejor = std::min(mejor, minimax(tablero, true));
 
 					/*deshace el movimiento con ficha de cpu*/
 					aux[i][j]->setSimbolo('_');

@@ -69,7 +69,7 @@ private:
 
 
 	int evaluaTablero(Tablero t); //evaluate
-	int minimax(Tablero t, int d, bool m); //
+	int minimax(Tablero t, bool m); //
 };
 
 #endif // !GATO_H
